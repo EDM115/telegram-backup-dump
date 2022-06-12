@@ -1,2 +1,5 @@
-class Config: # (i guess…)
-    BOT_TOKEN = "i don't remember yet, dev stage"
+import os
+
+class Config(object):
+    BOT_TOKEN = os.environ.get("BOT_TOKEN")
+    LOGS_CHANNEL = int(os.environ.get("LOGS_CHANNEL", None))
