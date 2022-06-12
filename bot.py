@@ -7,7 +7,7 @@ import logging
 import time
 from pyrogram import Client, errors, filters, idle
 from pyrogram.types import Message, CallbackQuery
-from pyrogram.errors import FloodWait, RPCError
+from pyrogram.errors import FloodWait, RPCError, ValueError
 from Config import *
 
 # Initialize the client here
@@ -51,6 +51,18 @@ async def help_me(_, message: Message):
     await message.reply_text(text="https://telegra.ph/TeleDump-help-12-06")
 
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
+@teledump.on_message(filters.command("backup")
+async def backup(_, message: Message):
+    repliedmess = await message.reply("`Processing… ⏳`")
+    try:
+        idtodump = message.text.split(None, 1)[1]
+    except:
+        return await repliedmess.edit("Provide a chat\nCan be in format of `@something` or `-100×××××××××`")
+    try:
+        await teledump.get_chat(chat_id=idtodump)
+    except ValueError:
+        return await repliedmess.edit("The chat given is incorrect. Either it's incorrect, or you must add me to it with admin rights")
+    await repliedmess.edit(f"{idtodump} successfully added. Now, use **/range** if needed, **/dump** otherwise")
 
 # handle /range if it's sent. Modify the startrange and stoprange with correct positive values. Checks latest post id on idtodump
 
