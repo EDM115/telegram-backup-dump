@@ -12,8 +12,10 @@ from Config import *
 
 teledump = Client(
         "TeleDump",
-        bot_token=Config.BOT_TOKEN,
-        sleep_threshold=10
+        api_id = Config.API_ID,
+        api_hash = Config.API_HASH,
+        bot_token = Config.BOT_TOKEN,
+        sleep_threshold = 10
     )
 
 logging.basicConfig(
