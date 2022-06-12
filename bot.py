@@ -5,7 +5,9 @@
 import os
 import logging
 import time
-from pyrogram import Client, idle
+from pyrogram import Client, filters, idle
+from pyrogram.types import Message, CallbackQuery
+from pyrogram.errors import FloodWait, RPCError
 from Config import *
 
 # Initialize the client here
@@ -40,6 +42,9 @@ postlist = int()
 # Logic here, will look every 10s at the pyrogram doc
 
 # handle /start with a cute message
+@Client.on_message(filters.command("start"))
+async def start_bot(_, message: Message):
+    await message.reply_text(text="**Hello {} 👋**\n\nI'm TeleDump, a bot made for saving a whole channel/chat into another one.\nDo **/help** if you're lost 😉".format(message.from_user.mention), disable_web_page_preview=True)
 
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
 
