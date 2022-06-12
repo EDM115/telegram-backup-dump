@@ -1,4 +1,4 @@
-(c) EDM115 - 2022
+# (c) EDM115 - 2022
 # No rights reserved, this is open source sir 😘
 
 # async
