@@ -2,9 +2,10 @@
 # No rights reserved, this is open source sir 😘
 
 # async
+import os
 import logging
 import time
-from pyrogram import Client
+from pyrogram import Client, idle
 from Config import *
 
 # Initialize the client here
@@ -59,3 +60,8 @@ Does for currentpost in postlist (overflowed by start and stop ranges):
         edit the message each 10 messages forwarded with success and error counts
     in the end, send a message with list of failed messages + their links. So end user can try to check if they exists or no (but mostly it will be deleted posts so yea…)
 """
+
+
+# Run the bot
+teledump.start()
+idle()
