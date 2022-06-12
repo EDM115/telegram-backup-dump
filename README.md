@@ -1,4 +1,4 @@
-# telegram-backup
+# telegram-backup-dump
 ### Backs up a whole (or not) chat/channel by forwarding to another one
   
 ## Usage
