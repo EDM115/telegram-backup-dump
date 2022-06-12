@@ -42,7 +42,7 @@ postlist = int()
 # Logic here, will look every 10s at the pyrogram doc
 
 # handle /start with a cute message
-@Client.on_message(filters.command("start"))
+@teledump.on_message(filters.command("start"))
 async def start_bot(_, message: Message):
     await message.reply_text(text="**Hello {} 👋**\n\nI'm TeleDump, a bot made for saving a whole channel/chat into another one.\nDo **/help** if you're lost 😉".format(message.from_user.mention), disable_web_page_preview=True)
 
@@ -70,5 +70,6 @@ Does for currentpost in postlist (overflowed by start and stop ranges):
 
 
 # Run the bot
-teledump.start()
-idle()
+#teledump.start()
+#idle()
+teledump.run()
