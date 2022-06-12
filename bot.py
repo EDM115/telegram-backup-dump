@@ -11,7 +11,6 @@ from pyrogram.errors import FloodWait, RPCError, ValueError
 from Config import *
 
 # Initialize the client here
-
 teledump = Client(
         "TeleDump",
         api_id = Config.API_ID,
@@ -103,11 +102,12 @@ async def dump(_, message: Message):
     except:
         return await dumpmess.edit("Provide a chat\nCan be in format of `@something` or `-100×××××××××`\I need to be present there **as administrator**")
     try:
-        await teledump.get_chat(chat_id=idtodump)
+        itsadump = await teledump.get_chat(chat_id=dumpid)
     except ValueError:
         return await dumpmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
     # https://docs.pyrogram.org/api/types/ChatMember#pyrogram.types.ChatMember ADMINISTRATOR check
-    adminornot = teledump.ChatMember().ChatMemberStatus
+    imthere = itsadump.get_member(user_id=teledump.id)
+    adminornot = imthere.ChatMemberStatus
     if adminornot == "MEMBER":
         await message.reply("I'm a simple member there. Promote me to admin !")
     elif adminornot == "ADMINISTRATOR" or adminornot == "OWNER":
