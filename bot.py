@@ -1,10 +1,11 @@
-# (c) EDM115 - 2022
+(c) EDM115 - 2022
 # No rights reserved, this is open source sir 😘
 
 # async
 import os
 import logging
 import time
+import types
 from pyrogram import Client, errors, filters, idle
 from pyrogram.types import Message, ChatMember
 from pyrogram.errors import FloodWait, RPCError, ValueError
@@ -73,8 +74,8 @@ async def range(_, message: Message):
         return await rangemess.edit("Provide correct values\nFormat : `start_message_id:stop_message_id`\n\nExamples :\n`/range 10:30` : start at the message №10 and ends at the message №30\n`/range 1:456` Start at the beginning of the chat to the message №456\n`/range 666:None` The range starts at the message №666 to the most recent message of the chat of the chat")
     try:
         splitted_range = unsplitted_range.split(":")
-        startrange = splitted_range[0]
-        stoprange = splitted_range[1]
+        startrange = int(splitted_range[0])
+        stoprange = int(splitted_range[1])
         # Check if positive
         if startrange > 0 and stoprange > 0:
             pass
@@ -105,6 +106,8 @@ async def dump(_, message: Message):
         itsadump = await teledump.get_chat(chat_id=dumpid)
     except ValueError:
         return await dumpmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
+    """
+    Headache here 💀 Idk how to get the ID of the bot itself + useless verification
     # https://docs.pyrogram.org/api/types/ChatMember#pyrogram.types.ChatMember ADMINISTRATOR check
     imthere = itsadump.get_member(user_id=teledump.id)
     adminornot = imthere.ChatMemberStatus
@@ -114,10 +117,23 @@ async def dump(_, message: Message):
         await message.reply("Enough rights. Good 😌")
     else:
         return dumpmess.edit("There is a problem with the dump. Add me in and make me admin")
+    """
     await dumpmess.edit(f"{dumpid} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
 
-
 # handle /tag and modify tagged with True or False
+@teledump.on_message(filters.command("tag"))
+async def tag(_, message: Message):
+    tagmess = await message.reply("`Processing… ⏳`")
+    try:
+        tagged = message.text.split(None, 1)[1]
+    except:
+        return await tagmess.edit("Provide a value. Must be `True` or `False` (case sensitive)")
+    if not isinstance(tagged, types.BooleanType):
+        return await tagmess.edit("Provide a correct value. Must be `True` or `False` (case sensitive)")
+    if tagged:
+        await tagmess.edit("Successfully changed 👌 Messages will be send with forward tag")
+    else:
+        await tagmess.edit("Successfully changed 👌 Messages will be send without forward tag")
 
 # def /go
 """
