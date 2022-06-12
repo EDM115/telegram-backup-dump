@@ -60,7 +60,7 @@ async def backup(_, message: Message):
     try:
         await teledump.get_chat(chat_id=idtodump)
     except ValueError:
-        return await repliedmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights")
+        return await repliedmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
     await repliedmess.edit(f"{idtodump} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
 
 # handle /range if it's sent. Modify the startrange and stoprange with correct positive values. Checks latest post id on idtodump
