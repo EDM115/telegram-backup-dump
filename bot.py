@@ -6,7 +6,7 @@ import os
 import logging
 import time
 from pyrogram import Client, errors, filters, idle
-from pyrogram.types import Message, CallbackQuery
+from pyrogram.types import Message, ChatMember
 from pyrogram.errors import FloodWait, RPCError, ValueError
 from Config import *
 
@@ -94,6 +94,20 @@ async def range(_, message: Message):
     await rangemess.edit(f"Range successfully changed 👌\n\nStarts at {startrange} and stops at {stoprange}")
 
 # handle /dump with same verifs as /backup
+@teledump.on_message(filters.command("dump"))
+async def dump(_, message: Message):
+    dumpmess = await message.reply("`Processing… ⏳`")
+    try:
+        dumpid = message.text.split(None, 1)[1]
+    except:
+        return await dumpmess.edit("Provide a chat\nCan be in format of `@something` or `-100×××××××××`\I need to be present there **as administrator**")
+    try:
+        await teledump.get_chat(chat_id=idtodump)
+    except ValueError:
+        return await dumpmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
+    # https://docs.pyrogram.org/api/types/ChatMember#pyrogram.types.ChatMember ADMINISTRATOR check
+    await dumpmess.edit(f"{dumpid} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
+
 
 # handle /tag and modify tagged with True or False
 
