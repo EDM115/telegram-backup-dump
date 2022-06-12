@@ -64,6 +64,20 @@ async def backup(_, message: Message):
     await repliedmess.edit(f"{idtodump} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
 
 # handle /range if it's sent. Modify the startrange and stoprange with correct positive values. Checks latest post id on idtodump
+@teledump.on_message(filters.command("range"))
+async def range(_, message: Message):
+    rangemess = await message.reply("`Processing… ⏳`")
+    try:
+        unsplitted_range = message.text.split(None, 1)[1]
+    except:
+        return await rangemess.edit("Provide correct values\nFormat : `start_message_id:stop_message_id`\n\nExamples :\n`/range 10:30` : start at the message №10 and ends at the message №30\n`/range 1:456` Start at the beginning of the chat to the message №456\n`/range 666: None` The range starts at the message №666 to the most recent message of the chat of the chat")
+    try:
+        splitted_range = unsplitted_range.split(":")
+        startrange = splitted_range[0]
+        stoprange = splitted_range[1]
+    except:
+        return await rangemess.edit("An unknown error happened while processing your values")
+    if
 
 # handle /dump with same verifs as /backup
 
