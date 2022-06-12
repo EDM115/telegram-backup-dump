@@ -70,14 +70,28 @@ async def range(_, message: Message):
     try:
         unsplitted_range = message.text.split(None, 1)[1]
     except:
-        return await rangemess.edit("Provide correct values\nFormat : `start_message_id:stop_message_id`\n\nExamples :\n`/range 10:30` : start at the message №10 and ends at the message №30\n`/range 1:456` Start at the beginning of the chat to the message №456\n`/range 666: None` The range starts at the message №666 to the most recent message of the chat of the chat")
+        return await rangemess.edit("Provide correct values\nFormat : `start_message_id:stop_message_id`\n\nExamples :\n`/range 10:30` : start at the message №10 and ends at the message №30\n`/range 1:456` Start at the beginning of the chat to the message №456\n`/range 666:None` The range starts at the message №666 to the most recent message of the chat of the chat")
     try:
         splitted_range = unsplitted_range.split(":")
         startrange = splitted_range[0]
         stoprange = splitted_range[1]
+        # Check if positive
+        if startrange > 0 and stoprange > 0:
+            pass
+        else:
+            startrange = 1
+            stoprange = None
+            raise ValueError("Negative values here")
     except:
-        return await rangemess.edit("An unknown error happened while processing your values")
-    if
+        return await rangemess.edit("An unknown error happened while processing your values.\nNote : negative values can't work")
+    total_mess = get_chat_history_count(idtodump)
+    if startrange > total_mess:
+        startrange = 1
+        return await rangemess.edit(f"Start (`{startrange}`) is above the chat limit. Choose a lower value")
+    if stoprange > total_mess:
+        stoprange = None
+        return await rangemess.edit(f"Stop (`{stoprange}`) is above the chat limit. Choose a lower value")
+    await rangemess.edit(f"Range successfully changed 👌\n\nStarts at {startrange} and stops at {stoprange}")
 
 # handle /dump with same verifs as /backup
 
