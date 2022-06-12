@@ -29,14 +29,15 @@ LOGGER = logging.getLogger(__name__)
 logging.getLogger("pyrogram").setLevel(logging.WARN)
 
 # Needed vars there
-
+global idtodump, startrange, stoprange, dumpid, tagged, currentpost, howmanyposts, postlist
 idtodump = None
 startrange = 1
 stoprange = None
 dumpid = int()
 tagged = True
 currentpost = int()
-postlist = int()
+howmanyposts = int()
+postlist = []
 
 # Logic here, will look every 10s at the pyrogram doc
 
@@ -106,6 +107,13 @@ async def dump(_, message: Message):
     except ValueError:
         return await dumpmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
     # https://docs.pyrogram.org/api/types/ChatMember#pyrogram.types.ChatMember ADMINISTRATOR check
+    adminornot = teledump.ChatMember().ChatMemberStatus
+    if adminornot == "MEMBER":
+        await message.reply("I'm a simple member there. Promote me to admin !")
+    elif adminornot == "ADMINISTRATOR" or adminornot == "OWNER":
+        await message.reply("Enough rights. Good 😌")
+    else:
+        return dumpmess.edit("There is a problem with the dump. Add me in and make me admin")
     await dumpmess.edit(f"{dumpid} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
 
 
