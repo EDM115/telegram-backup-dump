@@ -1,0 +1,1 @@
+teledump: bash start.sh
