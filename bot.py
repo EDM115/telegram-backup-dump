@@ -30,7 +30,6 @@ logging.getLogger("pyrogram").setLevel(logging.WARN)
 
 # Needed vars there
 
-btoken = Config.BOT_TOKEN
 idtodump = None
 startrange = 1
 stoprange = None
@@ -51,7 +50,7 @@ async def help_me(_, message: Message):
     await message.reply_text(text="https://telegra.ph/TeleDump-help-12-06")
 
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
-@teledump.on_message(filters.command("backup")
+@teledump.on_message(filters.command("backup"))
 async def backup(_, message: Message):
     repliedmess = await message.reply("`Processing… ⏳`")
     try:
