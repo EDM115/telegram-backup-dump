@@ -13,6 +13,8 @@
   
 ## Needed variables
 + `BOT_TOKEN`
++ `API_ID`
++ `API_HASH`  
 I think it's enough…
 
 ## Hosting
