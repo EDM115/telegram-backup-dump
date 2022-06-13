@@ -19,6 +19,7 @@ I think it's enough…
 
 ## Hosting
 Heroku I think…
+https://www.heroku.com/deploy?template=https://github.com/EDM115/telegram-backup-dump --> NOT READY YET !!!
 
 ### Framework
 PyroGram gang forever 💪
