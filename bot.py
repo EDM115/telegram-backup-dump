@@ -5,7 +5,7 @@
 import os
 import logging
 import time
-import types
+from types import BooleanType as blTyp
 from pyrogram import Client, errors, filters, idle
 from pyrogram.types import Message, ChatMember
 from pyrogram.errors import FloodWait, RPCError
@@ -52,7 +52,7 @@ async def help_me(_, message: Message):
 
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
 @teledump.on_message(filters.command("backup"))
-async def backup(_, message: Message):
+async def backup(_, message: Message, idtodump):
     repliedmess = await message.reply("`Processing… ⏳`")
     try:
         idtodump = message.text.split(None, 1)[1]
@@ -61,12 +61,13 @@ async def backup(_, message: Message):
     try:
         await teledump.get_chat(chat_id=idtodump)
     except ValueError:
+        LOGGER.warn(f"Incorrect chat in /backup : {idtodump}")
         return await repliedmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
     await repliedmess.edit(f"{idtodump} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
 
 # handle /range if it's sent. Modify the startrange and stoprange with correct positive values. Checks latest post id on idtodump
 @teledump.on_message(filters.command("range"))
-async def range(_, message: Message):
+async def range(_, message: Message, startrange, stoprange):
     rangemess = await message.reply("`Processing… ⏳`")
     try:
         unsplitted_range = message.text.split(None, 1)[1]
@@ -96,7 +97,7 @@ async def range(_, message: Message):
 
 # handle /dump with same verifs as /backup
 @teledump.on_message(filters.command("dump"))
-async def dump(_, message: Message):
+async def dump(_, message: Message, dumpid):
     dumpmess = await message.reply("`Processing… ⏳`")
     try:
         dumpid = message.text.split(None, 1)[1]
@@ -105,10 +106,13 @@ async def dump(_, message: Message):
     try:
         itsadump = await teledump.get_chat(chat_id=dumpid)
     except KeyError:
+        LOGGER.warn(f"KeyError in /dump with {dumpid}")
         return await dumpmess.edit("This chat doesn't exist\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100××××××× or t.me/c/××××××")
-    except PEER_ID_INVALID:
+    except PeerIdInvalid:
+        LOGGER.warn(f"PeerIdInvalid in /dump with {dumpid}")
         return await dumpmess.edit("You need to add me there ! And give me admin rights ☺️")
     except:
+        LOGGER.warn(f"Unknown error in /dump with {dumpid}")
         return await dumpmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
     """
     Headache here 💀 Idk how to get the ID of the bot itself + useless verification
@@ -126,13 +130,13 @@ async def dump(_, message: Message):
 
 # handle /tag and modify tagged with True or False
 @teledump.on_message(filters.command("tag"))
-async def tag(_, message: Message):
+async def tag(_, message: Message, tagged):
     tagmess = await message.reply("`Processing… ⏳`")
     try:
         tagged = message.text.split(None, 1)[1]
     except:
         return await tagmess.edit("Provide a value. Must be `True` or `False` (case sensitive)")
-    if not isinstance(tagged, types.BooleanType):
+    if not isinstance(tagged, blTyp):
         return await tagmess.edit("Provide a correct value. Must be `True` or `False` (case sensitive)")
     if tagged:
         await tagmess.edit("Successfully changed 👌 Messages will be send with forward tag")
@@ -162,15 +166,17 @@ async def send_logs(_, message: Message):
                 chat_id=message.chat.id,
                 document=doc_f,
                 file_name=doc_f.name,
-                reply_to_message_id=message.message_id
+                reply_to_message_id=message.id
             )
             LOGGER.info(f"Log file sent to {message.from_user.id}")
         except FloodWait as e:
             sleep(e.x)
         except RPCError as e:
             message.reply_text(e, quote=True)
+            LOGGER.warn(f"Error in /log : {e}")
 
 # /var for sending the variables. Useful to know what have been modified
+# async def send_vars(_, message: Message, idtodump, startrange, stoprange, dumpid, tagged, currentpost, howmanyposts, postlist):
 @teledump.on_message(filters.command("var"))
 async def send_vars(_, message: Message):
     all_vars = f"""
@@ -188,6 +194,5 @@ postlist = `{postlist}`
     await message.reply(text=all_vars)
 
 # Run the bot
-#teledump.start()
-#idle()
+LOGGER.info("We start captain !")
 teledump.run()
