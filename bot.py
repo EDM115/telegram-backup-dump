@@ -5,7 +5,6 @@
 import os
 import logging
 import time
-from types import BooleanType as blTyp
 from pyrogram import Client, errors, filters, idle
 from pyrogram.types import Message, ChatMember
 from pyrogram.errors import FloodWait, RPCError
@@ -136,7 +135,7 @@ async def tag(_, message: Message, tagged):
         tagged = message.text.split(None, 1)[1]
     except:
         return await tagmess.edit("Provide a value. Must be `True` or `False` (case sensitive)")
-    if not isinstance(tagged, blTyp):
+    if not isinstance(tagged, bool):
         return await tagmess.edit("Provide a correct value. Must be `True` or `False` (case sensitive)")
     if tagged:
         await tagmess.edit("Successfully changed 👌 Messages will be send with forward tag")
