@@ -48,7 +48,7 @@ async def start_bot(_, message: Message):
 
 @teledump.on_message(filters.command("help"))
 async def help_me(_, message: Message):
-    await message.reply_text(text="https://telegra.ph/TeleDump-help-12-06")
+    await message.reply_text(text="**https://telegra.ph/TeleDump-help-12-06**")
 
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
 @teledump.on_message(filters.command("backup"))
@@ -85,14 +85,14 @@ async def range(_, message: Message):
             raise ValueError("Negative values here")
     except:
         return await rangemess.edit("An unknown error happened while processing your values.\nNote : negative values can't work")
-    total_mess = get_chat_history_count(idtodump)
+    total_mess = teledump.get_chat_history_count(idtodump)
     if startrange > total_mess:
         startrange = 1
         return await rangemess.edit(f"Start (`{startrange}`) is above the chat limit. Choose a lower value")
     if stoprange > total_mess:
         stoprange = None
         return await rangemess.edit(f"Stop (`{stoprange}`) is above the chat limit. Choose a lower value")
-    await rangemess.edit(f"Range successfully changed 👌\n\nStarts at {startrange} and stops at {stoprange}")
+    await rangemess.edit(f"Range successfully changed 👌\n\nStarts at `{startrange}` and stops at `{stoprange}`")
 
 # handle /dump with same verifs as /backup
 @teledump.on_message(filters.command("dump"))
@@ -104,7 +104,11 @@ async def dump(_, message: Message):
         return await dumpmess.edit("Provide a chat\nCan be in format of `@something` or `-100×××××××××`\I need to be present there **as administrator**")
     try:
         itsadump = await teledump.get_chat(chat_id=dumpid)
-    except ValueError:
+    except KeyError:
+        return await dumpmess.edit("This chat doesn't exist\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100××××××× or t.me/c/××××××")
+    except PEER_ID_INVALID:
+        return await dumpmess.edit("You need to add me there ! And give me admin rights ☺️")
+    except:
         return await dumpmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
     """
     Headache here 💀 Idk how to get the ID of the bot itself + useless verification
@@ -118,7 +122,7 @@ async def dump(_, message: Message):
     else:
         return dumpmess.edit("There is a problem with the dump. Add me in and make me admin")
     """
-    await dumpmess.edit(f"{dumpid} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
+    await dumpmess.edit(f"{dumpid} successfully added 👌\nTime for **/tag** if needed, otherwise **/go**")
 
 # handle /tag and modify tagged with True or False
 @teledump.on_message(filters.command("tag"))
