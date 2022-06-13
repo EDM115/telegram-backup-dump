@@ -8,8 +8,8 @@ import time
 import types
 from pyrogram import Client, errors, filters, idle
 from pyrogram.types import Message, ChatMember
-from pyrogram.errors import FloodWait, RPCError, ValueError
-from Config import *
+from pyrogram.errors import FloodWait, RPCError
+from config import *
 
 # Initialize the client here
 teledump = Client(
