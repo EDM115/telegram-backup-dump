@@ -142,11 +142,11 @@ The logic is defined here :
 Verify if previous commands have been sent and are ok
 Send a message to the command sender + in ✨logs✨ (not mandatory so add an iflogs() in Config)
 Does for currentpost in postlist (overflowed by start and stop ranges):
-    if tagged (else use another thing without forward tag):
+    if tagged (else use another thing without forward tag -> send_message() creates a copy):
         try forward currentpost to dumpid
-        except -> idremember: time.sleep || error: wait&retry or counterrors+=1 && listerrors.append(currentpost)
+        except -> toomuchcattempts: time.sleep || error: wait&retry or counterrors+=1 && listerrors.append(currentpost)
         edit the message each 10 messages forwarded with success and error counts
-    in the end, send a message with list of failed messages + their links. So end user can try to check if they exists or no (but mostly it will be deleted posts so yea…)
+    in the end, send a message with list of failed messages + their links. So end user can try to check if they exists or no (but mostly it will be deleted posts/system messages so yea…)
 """
 
 
