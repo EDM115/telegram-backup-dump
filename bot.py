@@ -22,7 +22,7 @@ teledump = Client(
 
 logging.basicConfig(
     level=logging.INFO,
-    handlers=[logging.FileHandler('log.txt'), logging.StreamHandler()],
+    handlers=[logging.FileHandler('logs.txt'), logging.StreamHandler()],
     format="%(asctime)s - %(levelname)s - %(name)s - %(threadName)s - %(message)s"
 )
 LOGGER = logging.getLogger(__name__)
@@ -101,7 +101,7 @@ async def dump(_, message: Message):
     try:
         dumpid = message.text.split(None, 1)[1]
     except:
-        return await dumpmess.edit("Provide a chat\nCan be in format of `@something` or `-100×××××××××`\I need to be present there **as administrator**")
+        return await dumpmess.edit("Provide a chat\nCan be in format of `@something` or `-100×××××××××`\nI need to be present there **as administrator**")
     try:
         itsadump = await teledump.get_chat(chat_id=dumpid)
     except KeyError:
@@ -153,6 +153,39 @@ Does for currentpost in postlist (overflowed by start and stop ranges):
     in the end, send a message with list of failed messages + their links. So end user can try to check if they exists or no (but mostly it will be deleted posts/system messages so yea…)
 """
 
+# Added /log for bug tracking
+@teledump.on_message(filters.command("log"))
+async def send_logs(_, message: Message):
+    with open('logs.txt', 'rb') as doc_f:
+        try:
+            await teledump.send_document(
+                chat_id=message.chat.id,
+                document=doc_f,
+                file_name=doc_f.name,
+                reply_to_message_id=message.message_id
+            )
+            LOGGER.info(f"Log file sent to {message.from_user.id}")
+        except FloodWait as e:
+            sleep(e.x)
+        except RPCError as e:
+            message.reply_text(e, quote=True)
+
+# /var for sending the variables. Useful to know what have been modified
+@teledump.on_message(filters.command("var"))
+async def send_vars(_, message: Message):
+    all_vars = f"""
+**All variables at {time.strftime("%Y/%m/%d - %H:%M:%S")} :**
+
+idtodump = `{idtodump}`
+startrange = `{startrange}`
+stoprange = `{stoprange}`
+dumpid = `{dumpid}`
+tagged = `{tagged}`
+currentpost = `{currentpost}`
+howmanyposts = `{howmanyposts}`
+postlist = `{postlist}`
+    """
+    await message.reply(text=all_vars)
 
 # Run the bot
 #teledump.start()
