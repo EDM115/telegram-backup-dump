@@ -213,7 +213,7 @@ postlist = `{Var.postlist}`
 # Resets all values to origin
 @teledump.on_message(filters.command("cancel"))
 async def cancel(_, message: Message):
-    cancelmess = await message.replytext("`Processing… ⏳`")
+    cancelmess = await message.reply_text("`Processing… ⏳`")
     try:
         Var.currentuser = int()
         Var.idtodump = None
