@@ -57,7 +57,7 @@ async def backup(_, message: Message):
         try:
             await teledump.get_chat(chat_id=Var.idtodump)
         except ValueError:
-            LOGGER.warn(f"Incorrect chat in /backup : {idtodump}")
+            LOGGER.warn(f"Incorrect chat in /backup : {Var.idtodump}")
             return await repliedmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
         await repliedmess.edit(f"{Var.idtodump} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
     elif Var.currentuser != message.from_user.id:
@@ -88,10 +88,10 @@ async def range(_, message: Message):
         except:
             return await rangemess.edit("An unknown error happened while processing your values.\nNote : negative values can't work")
         total_mess = teledump.get_chat_history_count(Var.idtodump)
-        if Var.startrange > total_mess:
+        if Var.startrange > int(total_mess):
             Var.startrange = 1
             return await rangemess.edit(f"Start (`{Var.startrange}`) is above the chat limit. Choose a lower value")
-        if Var.stoprange > total_mess:
+        if Var.stoprange > int(total_mess):
             Var.stoprange = None
             return await rangemess.edit(f"Stop (`{Var.stoprange}`) is above the chat limit. Choose a lower value")
         await rangemess.edit(f"Range successfully changed 👌\n\nStarts at `{Var.startrange}` and stops at `{Var.stoprange}`")
@@ -147,7 +147,8 @@ async def tag(_, message: Message):
             Var.tagged = message.text.split(None, 1)[1]
         except:
             return await tagmess.edit("Provide a value. Must be `True` or `False` (case sensitive)")
-        if not isinstance(tagged, bool):
+        #if not isinstance(tagged, bool):
+        if tagged != "True" and tagged != "False"
             return await tagmess.edit("Provide a correct value. Must be `True` or `False` (case sensitive)")
         if Var.tagged:
             await tagmess.edit("Successfully changed 👌 Messages will be send with forward tag")
