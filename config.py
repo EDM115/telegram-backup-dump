@@ -8,6 +8,7 @@ class Config(object):
 
 class Var(object):
     currentuser = int()
+    waitinglist = []
     idtodump = None
     startrange = 1
     stoprange = None
