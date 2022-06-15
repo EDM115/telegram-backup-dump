@@ -48,7 +48,7 @@ async def begin(_, message: Message):
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
 @teledump.on_message(filters.command("backup"))
 async def backup(_, message: Message):
-    if Var.currentuser != 0:
+    if Var.currentuser == message.from_user.id:
         repliedmess = await message.reply("`Processing… ⏳`")
         try:
             Var.idtodump = message.text.split(None, 1)[1]
@@ -60,7 +60,8 @@ async def backup(_, message: Message):
             LOGGER.warn(f"Incorrect chat in /backup : {Var.idtodump}")
             return await repliedmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
         await repliedmess.edit(f"{Var.idtodump} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
-    elif Var.currentuser != message.from_user.id:
+    elif Var.currentuser != message.from_user.id and Var.currentuser != 0:
+        Var.waitinglist.append(message.from_user.id) if message.from_user.id not in Var.waitinglist
         return await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nTry again later")
     else:
         return await message.reply_text("You need to send **/begin** to authenticate yourself")
@@ -68,7 +69,7 @@ async def backup(_, message: Message):
 # handle /range if it's sent. Modify the startrange and stoprange with correct positive values. Checks latest post id on idtodump
 @teledump.on_message(filters.command("range"))
 async def range(_, message: Message):
-    if Var.currentuser != 0:
+    if Var.currentuser == message.from_user.id:
         rangemess = await message.reply("`Processing… ⏳`")
         try:
             unsplitted_range = message.text.split(None, 1)[1]
@@ -95,7 +96,8 @@ async def range(_, message: Message):
             Var.stoprange = None
             return await rangemess.edit(f"Stop (`{Var.stoprange}`) is above the chat limit. Choose a lower value")
         await rangemess.edit(f"Range successfully changed 👌\n\nStarts at `{Var.startrange}` and stops at `{Var.stoprange}`")
-    elif Var.currentuser != message.from_user.id:
+    elif Var.currentuser != message.from_user.id and Var.currentuser != 0:
+        Var.waitinglist.append(message.from_user.id) if message.from_user.id not in Var.waitinglist
         return await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nTry again later")
     else:
         return await message.reply_text("You need to send **/begin** to authenticate yourself")
@@ -103,7 +105,7 @@ async def range(_, message: Message):
 # handle /dump with same verifs as /backup
 @teledump.on_message(filters.command("dump"))
 async def dump(_, message: Message):
-    if Var.currentuser != 0:
+    if Var.currentuser == message.from_user.id:
         dumpmess = await message.reply("`Processing… ⏳`")
         try:
             Var.dumpid = message.text.split(None, 1)[1]
@@ -133,7 +135,8 @@ async def dump(_, message: Message):
             return dumpmess.edit("There is a problem with the dump. Add me in and make me admin")
         """
         await dumpmess.edit(f"{Var.dumpid} successfully added 👌\nTime for **/tag** if needed, otherwise **/go**")
-    elif Var.currentuser != message.from_user.id:
+    elif Var.currentuser != message.from_user.id and Var.currentuser != 0:
+        Var.waitinglist.append(message.from_user.id) if message.from_user.id not in Var.waitinglist
         return await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nTry again later")
     else:
         return await message.reply_text("You need to send **/begin** to authenticate yourself")
@@ -141,7 +144,7 @@ async def dump(_, message: Message):
 # handle /tag and modify tagged with True or False
 @teledump.on_message(filters.command("tag"))
 async def tag(_, message: Message):
-    if Var.currentuser != 0:
+    if Var.currentuser == message.from_user.id:
         tagmess = await message.reply("`Processing… ⏳`")
         try:
             Var.tagged = message.text.split(None, 1)[1]
@@ -154,7 +157,8 @@ async def tag(_, message: Message):
             await tagmess.edit("Successfully changed 👌 Messages will be send with forward tag")
         else:
             await tagmess.edit("Successfully changed 👌 Messages will be send without forward tag")
-    elif Var.currentuser != message.from_user.id:
+    elif Var.currentuser != message.from_user.id and Var.currentuser != 0:
+        Var.waitinglist.append(message.from_user.id) if message.from_user.id not in Var.waitinglist
         return await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nTry again later")
     else:
         return await message.reply_text("You need to send **/begin** to authenticate yourself")
