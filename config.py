@@ -17,3 +17,4 @@ class Var(object):
     currentpost = int()
     howmanyposts = int()
     postlist = []
+    tasks = []
