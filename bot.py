@@ -37,7 +37,7 @@ async def help_me(_, message: Message):
     await message.reply_text(text="**https://telegra.ph/TeleDump-help-12-06**")
 
 async def isinWaitlist(user_id):
-    if user_id is in Var.waitinglist:
+    if user_id in Var.waitinglist:
         return True
     return False
 
