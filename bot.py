@@ -168,7 +168,7 @@ async def tag(_, message: Message):
         except:
             return await tagmess.edit("Provide a value. Must be `True` or `False` (case sensitive)")
         #if not isinstance(tagged, bool):
-        if tagged != "True" and tagged != "False"
+        if Var.tagged != "True" and Var.tagged != "False"
             return await tagmess.edit("Provide a correct value. Must be `True` or `False` (case sensitive)")
         Var.tasks[4] = 1
         elif Var.tagged:
