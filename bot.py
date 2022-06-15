@@ -50,15 +50,17 @@ async def isUsing(user_id):
 @teledump.on_message(filters.command("begin"))
 async def begin(_, message: Message):
     if isUsing(message.from_user.id):
-        await message.reply_text("You already started a process 😐 Do **/backup** to continue, or **/clean** to start over")
+        return await message.reply_text("You already started a process 😐 Do **/backup** to continue, or **/clean** to start over")
+    Var.tasks[0] = 0
     elif not isinWaitlist(message.from_user.id):
         Var.waitinglist.append(message.from_user.id) if message.from_user.id not in Var.waitinglist
-        await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nYou will be notified when I'm free to use (grab your seat quickly 🏃‍♂️💨)")
+        return await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nYou will be notified when I'm free to use (grab your seat quickly 🏃‍♂️💨)")
     else:
         try:
             Var.currentuser = message.from_user.id
         except:
             return await message.reply_text("Unknown error")
+        Var.tasks[0] = 1
         await message.reply_text("Good 😌 you can now use me\nStart with **/backup**")
 
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
@@ -66,6 +68,7 @@ async def begin(_, message: Message):
 async def backup(_, message: Message):
     if isUsing(message.from_user.id):
         repliedmess = await message.reply("`Processing… ⏳`")
+        Var.tasks[1] = 0
         try:
             Var.idtodump = message.text.split(None, 1)[1]
         except:
@@ -75,6 +78,7 @@ async def backup(_, message: Message):
         except ValueError:
             LOGGER.warn(f"Incorrect chat in /backup : {Var.idtodump}")
             return await repliedmess.edit("The chat given is incorrect. Either it doesn't exist, or it's private and you must add me to it with admin rights\n\nCorrect format is : `something` if it's @something, or `-100×××××××` if it's t.me/joinchat/100×××××××")
+        Var.tasks[1] = 1
         await repliedmess.edit(f"{Var.idtodump} successfully added 👌\nNow, use **/range** if needed, **/dump** otherwise")
     else:
         return await message.reply_text("You need to send **/begin** to authenticate yourself")
@@ -84,6 +88,7 @@ async def backup(_, message: Message):
 async def range(_, message: Message):
     if isUsing(message.from_user.id):
         rangemess = await message.reply("`Processing… ⏳`")
+        Var.tasks[2] = 0
         try:
             unsplitted_range = message.text.split(None, 1)[1]
         except:
@@ -108,6 +113,7 @@ async def range(_, message: Message):
         if Var.stoprange > int(total_mess):
             Var.stoprange = None
             return await rangemess.edit(f"Stop (`{Var.stoprange}`) is above the chat limit. Choose a lower value")
+        Var.tasks[2] = 1
         await rangemess.edit(f"Range successfully changed 👌\n\nStarts at `{Var.startrange}` and stops at `{Var.stoprange}`")
     else:
         return await message.reply_text("You need to send **/begin** to authenticate yourself")
@@ -117,6 +123,7 @@ async def range(_, message: Message):
 async def dump(_, message: Message):
     if isUsing(message.from_user.id):
         dumpmess = await message.reply("`Processing… ⏳`")
+        Var.tasks[3] = 0
         try:
             Var.dumpid = message.text.split(None, 1)[1]
         except:
@@ -144,6 +151,7 @@ async def dump(_, message: Message):
         else:
             return dumpmess.edit("There is a problem with the dump. Add me in and make me admin")
         """
+        Var.tasks[3] = 1
         await dumpmess.edit(f"{Var.dumpid} successfully added 👌\nTime for **/tag** if needed, otherwise **/go**")
     else:
         return await message.reply_text("You need to send **/begin** to authenticate yourself")
@@ -153,6 +161,7 @@ async def dump(_, message: Message):
 async def tag(_, message: Message):
     if isUsing(message.from_user.id):
         tagmess = await message.reply("`Processing… ⏳`")
+        Var.tasks[4] = 0
         try:
             Var.tagged = message.text.split(None, 1)[1]
         except:
@@ -160,7 +169,8 @@ async def tag(_, message: Message):
         #if not isinstance(tagged, bool):
         if tagged != "True" and tagged != "False"
             return await tagmess.edit("Provide a correct value. Must be `True` or `False` (case sensitive)")
-        if Var.tagged:
+        Var.tasks[4] = 1
+        elif Var.tagged:
             await tagmess.edit("Successfully changed 👌 Messages will be send with forward tag")
         else:
             await tagmess.edit("Successfully changed 👌 Messages will be send without forward tag")
@@ -218,8 +228,21 @@ tagged = `{Var.tagged}`
 currentpost = `{Var.currentpost}`
 howmanyposts = `{Var.howmanyposts}`
 postlist = `{Var.postlist}`
+tasks = `{Var.tasks}`
     """
     await message.reply(text=all_vars)
+
+async def clearvalues(everything=None):
+    Var.currentuser = int()
+    Var.idtodump = None
+    Var.startrange = 1
+    Var.stoprange = None
+    Var.dumpid = int()
+    Var.tagged = True
+    Var.currentpost = int()
+    Var.howmanyposts = int()
+    Var.postlist = []
+    Var.tasks = []
 
 # Resets all values to origin
 @teledump.on_message(filters.command("cancel"))
@@ -227,16 +250,8 @@ async def cancel(_, message: Message):
     cancelmess = await message.reply_text("`Processing… ⏳`")
     if isUsing(message.from_user.id):
         try:
-            # move it in an independent function
-            Var.currentuser = int()
-            Var.idtodump = None
-            Var.startrange = 1
-            Var.stoprange = None
-            Var.dumpid = int()
-            Var.tagged = True
-            Var.currentpost = int()
-            Var.howmanyposts = int()
-            Var.postlist = []
+            clearvalues()
+            # with everything = True if Config.BOT_OWNER for complete reset. It will reset also waitlist
         except:
             return await cancelmess.edit("An error happened 😕")
         await cancelmess.edit("Successfully cancelled all 😌")
