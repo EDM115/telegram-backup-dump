@@ -177,6 +177,9 @@ Does for currentpost in postlist (overflowed by start and stop ranges):
     in the end, send a message with list of failed messages + their links. So end user can try to check if they exists or no (but mostly it will be deleted posts/system messages so yea…)
     resets all values from Var to their original
 """
+@teledump.on_message(filters.command("go"))
+async def go(_, message: Message):
+    await message.reply("WIP 🚧")
 
 # Added /log for bug tracking
 @teledump.on_message(filters.command("log"))
