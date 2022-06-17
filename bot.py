@@ -270,16 +270,18 @@ async def returnit(message):
 async def breakit(message):
     tezt = await message.reply("Test 2")
     time.sleep(2)
-    if 1==1:
+    while 1==1:
         await tezt.edit("Test 2 is okay")
+        time.sleep(1)
         break
     await tezt.edit("OhOh 2")
 
 async def passit(message):
     tect = await message.reply("Test 3")
     time.sleep(2)
-    if 1==1:
+    while 1==1:
         await tect.edit("Test 3 sucessful")
+        time.sleep(1)
         pass
     await tect.edit("F in pyrogram 3")
 
