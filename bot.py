@@ -36,12 +36,12 @@ async def start_bot(_, message: Message):
 async def help_me(_, message: Message):
     await message.reply_text(text="**https://telegra.ph/TeleDump-help-12-06**")
 
-async def isinWaitlist(user_id):
+def isinWaitlist(user_id):
     if user_id in Var.waitinglist:
         return True
     return False
 
-async def isUsing(user_id):
+def isUsing(user_id):
     if user_id == Var.currentuser:
         return True
     return False
@@ -258,39 +258,6 @@ async def cancel(_, message: Message):
         await cancelmess.edit("Successfully cancelled all 😌")
     else:
         await cancelmess.edit("Bruh, don't try to remove other users values 💀")
-
-# tests for the return await
-async def returnit(message):
-    test = await message.reply("Test 1")
-    time.sleep(2)
-    if 1==1:
-        return await test.edit("Test 1 passed sucessfully")
-    await test.edit("Uh-Oh 1")
-
-async def breakit(message):
-    tezt = await message.reply("Test 2")
-    time.sleep(2)
-    while 1==1:
-        await tezt.edit("Test 2 is okay")
-        time.sleep(1)
-        break
-    await tezt.edit("OhOh 2")
-
-async def passit(message):
-    tect = await message.reply("Test 3")
-    time.sleep(2)
-    while 1==1:
-        await tect.edit("Test 3 sucessful")
-        time.sleep(1)
-        pass
-    await tect.edit("F in pyrogram 3")
-
-@teledump.on_message(filters.command("tests"))
-async def tests(_, message: Message):
-    await returnit(message)
-    await breakit(message)
-    await passit(message)
-    await message.reply("Noice")
 
 # Run the bot
 LOGGER.info("We start captain !")
