@@ -168,10 +168,10 @@ async def tag(_, message: Message):
         except:
             return await tagmess.edit("Provide a value. Must be `True` or `False` (case sensitive)")
         #if not isinstance(tagged, bool):
-        if Var.tagged != "True" and Var.tagged != "False"
+        if str(Var.tagged) != "True" and str(Var.tagged) != "False":
             return await tagmess.edit("Provide a correct value. Must be `True` or `False` (case sensitive)")
         Var.tasks[4] = 1
-        elif Var.tagged:
+        if Var.tagged:
             await tagmess.edit("Successfully changed 👌 Messages will be send with forward tag")
         else:
             await tagmess.edit("Successfully changed 👌 Messages will be send without forward tag")
@@ -258,6 +258,37 @@ async def cancel(_, message: Message):
         await cancelmess.edit("Successfully cancelled all 😌")
     else:
         await cancelmess.edit("Bruh, don't try to remove other users values 💀")
+
+# tests for the return await
+async def returnit(message):
+    test = await message.reply("Test 1")
+    time.sleep(2)
+    if 1==1:
+        return await test.edit("Test 1 passed sucessfully")
+    await test.edit("Uh-Oh 1")
+
+async def breakit(message):
+    tezt = await message.reply("Test 2")
+    time.sleep(2)
+    if 1==1:
+        await tezt.edit("Test 2 is okay")
+        break
+    await tezt.edit("OhOh 2")
+
+async def passit(message):
+    tect = await message.reply("Test 3")
+    time.sleep(2)
+    if 1==1:
+        await tect.edit("Test 3 sucessful")
+        pass
+    await tect.edit("F in pyrogram 3")
+
+@teledump.on_message(filters.command("tests"))
+async def tests(_, message: Message):
+    await returnit(message)
+    await breakit(message)
+    await passit(message)
+    await message.reply("Noice")
 
 # Run the bot
 LOGGER.info("We start captain !")
