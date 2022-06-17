@@ -53,6 +53,13 @@ async def begin(_, message: Message):
     if isUsing(message.from_user.id):
         Var.tasks[0] = 1
         return await message.reply_text("You already started a process 😐 Do **/backup** to continue, or **/clean** to start over")
+    elif Var.currentuser == 0 and not isinWaitlist(message.from_user.id): # user did something wrong like sending commands without /begin
+        try:
+            Var.currentuser = message.from_user.id
+        except:
+            return await message.reply_text("Unknown error")
+        Var.tasks[0] = 1
+        return await message.reply_text("Good 😌 you can now use me\nStart with **/backup**")
     elif not isinWaitlist(message.from_user.id):
         Var.waitinglist.append(message.from_user.id)
         return await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nYou will be notified when I'm free to use (grab your seat quickly 🏃‍♂️💨)")
@@ -107,8 +114,8 @@ async def range(_, message: Message):
                 raise ValueError("Negative values here")
         except:
             return await rangemess.edit("An unknown error happened while processing your values.\nNote : negative values can't work")
-        total_mess = teledump.get_chat_history_count(Var.idtodump)
-        if Var.startrange > int(total_mess):
+        total_mess = await teledump.get_chat_history_count(Var.idtodump)
+        if Var.startrange > total_mess:
             Var.startrange = 1
             return await rangemess.edit(f"Start (`{Var.startrange}`) is above the chat limit. Choose a lower value")
         if Var.stoprange > int(total_mess):
@@ -194,7 +201,11 @@ Does for currentpost in postlist (overflowed by start and stop ranges):
 """
 @teledump.on_message(filters.command("go"))
 async def go(_, message: Message):
-    await message.reply("WIP 🚧")
+    ok = "".join(Var.tasks)
+    if int(ok) == 11111:
+        await message.reply("WIP 🚧")
+    else:
+        await message.reply("You forgot some tasks")
 
 # Added /log for bug tracking
 @teledump.on_message(filters.command("log"))
@@ -221,6 +232,7 @@ async def send_vars(_, message: Message):
 **All variables at {time.strftime("%Y/%m/%d - %H:%M:%S")} :**
 
 currentuser = `{Var.currentuser}`
+waitinglist = `{Var.waitinglist}`
 idtodump = `{Var.idtodump}`
 startrange = `{Var.startrange}`
 stoprange = `{Var.stoprange}`
@@ -233,7 +245,7 @@ tasks = `{Var.tasks}`
     """
     await message.reply(text=all_vars)
 
-async def clearvalues(everything=None):
+def clearvalues(everything=None):
     Var.currentuser = int()
     Var.idtodump = None
     Var.startrange = 1
@@ -252,7 +264,7 @@ async def cancel(_, message: Message):
     if isUsing(message.from_user.id):
         try:
             clearvalues()
-            # with everything = True if Config.BOT_OWNER for complete reset. It will reset also waitlist
+            # with everything = True if Config.BOT_OWNER for complete reset. It will reset also waitinglist
         except:
             return await cancelmess.edit("An error happened 😕")
         await cancelmess.edit("Successfully cancelled all 😌")
