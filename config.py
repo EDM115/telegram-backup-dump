@@ -17,4 +17,4 @@ class Var(object):
     currentpost = int()
     howmanyposts = int()
     postlist = []
-    tasks = []
+    tasks = [None, None, None, None, None]
