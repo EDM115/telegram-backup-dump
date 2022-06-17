@@ -201,11 +201,14 @@ Does for currentpost in postlist (overflowed by start and stop ranges):
 """
 @teledump.on_message(filters.command("go"))
 async def go(_, message: Message):
-    ok = "".join(Var.tasks)
-    if int(ok) == 11111:
-        await message.reply("WIP 🚧")
+    if isUsing(message.from_user.id):
+        ok = "".join(Var.tasks)
+        if int(ok) == 11111:
+            await message.reply("WIP 🚧")
+        else:
+            return await message.reply("You forgot some commands 🙂")
     else:
-        await message.reply("You forgot some tasks")
+        return await message.reply_text("You need to send **/begin** to authenticate yourself")
 
 # Added /log for bug tracking
 @teledump.on_message(filters.command("log"))
