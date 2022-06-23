@@ -274,6 +274,32 @@ async def cancel(_, message: Message):
     else:
         await cancelmess.edit("Bruh, don't try to remove other users values 💀")
 
+# Simple mode inspired from https://github.com/imacekun/ACE-AUTO-FORWARD ❤️
+@teledump.on_message(filters.command("simple"))
+async def simple(_, message: Message):
+    simple_mess = await _.ask(message.chat.id, "**Forward any message from the destination channel\nBot should be admin here**")
+    dest = simple_mess.forward_from_chat.id
+    mess1 = await _.ask(message.chat.id, "**Send Starting Message From Where you want to Start forwarding**")
+    mess2 = await _.ask(message.chat.id, "**Send Ending Message from same chat**")
+    target = mess1.forward_from_chat.id
+    startmess = int(mess1.forward_from_message_id)
+    endmess = int(mess2.forward_from_message_id)+1
+    await message.reply_text("**Forwarding Started**\n\nWait some time…")
+    try:
+        for mess in range(startmess, endmess):
+            try:
+                await _.copy_message(
+                    chat_id=dest,
+                    from_chat_id=target,
+                    message_id=mess
+                )
+                time.sleep(2)
+            except Exception:
+                continue
+    except Exception as e:
+        await message.reply_text(str(e))
+    await message.reply_text("Done Forwarding")
+
 # Run the bot
 LOGGER.info("We start captain !")
 teledump.run()
