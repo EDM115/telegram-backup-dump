@@ -94,7 +94,7 @@ async def backup(_, message: Message):
 
 # handle /range if it's sent. Modify the startrange and stoprange with correct positive values. Checks latest post id on idtodump
 @teledump.on_message(filters.command("range"))
-async def range(_, message: Message):
+async def idrange(_, message: Message):
     if isUsing(message.from_user.id):
         rangemess = await message.reply("`Processing… ⏳`")
         Var.tasks[2] = 0
