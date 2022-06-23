@@ -8,6 +8,7 @@ import time
 from pyrogram import Client, errors, filters, idle
 from pyrogram.types import Message, ChatMember
 from pyrogram.errors import FloodWait, RPCError
+import pyromod.listen
 from config import *
 
 # Initialize the client here
