@@ -293,7 +293,9 @@ async def simple(_, message: Message):
                     from_chat_id=target,
                     message_id=mess
                 )
-                time.sleep(2)
+            except FloodWait as f:
+                asyncio.sleep(f.x)
+                mess-=1
             except Exception:
                 continue
     except Exception as e:
