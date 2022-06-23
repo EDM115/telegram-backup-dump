@@ -287,16 +287,16 @@ async def simple(_, message: Message):
     endmess = int(mess2.forward_from_message_id)+1
     await message.reply_text("**Forwarding Started**\n\nWait some time…")
     try:
-        for mess in range(startmess, endmess):
+        for id in range(startmess, endmess):
             try:
                 await _.copy_message(
                     chat_id=dest,
                     from_chat_id=target,
-                    message_id=mess
+                    message_id=id 
                 )
             except FloodWait as f:
                 asyncio.sleep(f.x)
-                mess-=1
+                id-=1
             except Exception:
                 continue
     except Exception as e:
