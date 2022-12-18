@@ -54,23 +54,22 @@ async def begin(_, message: Message):
     if isUsing(message.from_user.id):
         Var.tasks[0] = 1
         return await message.reply_text("You already started a process 😐 Do **/backup** to continue, or **/clean** to start over")
-    elif Var.currentuser == 0 and not isinWaitlist(message.from_user.id): # user did something wrong like sending commands without /begin
+    if Var.currentuser == 0 and not isinWaitlist(message.from_user.id): # user did something wrong like sending commands without /begin
         try:
             Var.currentuser = message.from_user.id
         except:
             return await message.reply_text("Unknown error")
         Var.tasks[0] = 1
         return await message.reply_text("Good 😌 you can now use me\nStart with **/backup**")
-    elif not isinWaitlist(message.from_user.id):
+    if not isinWaitlist(message.from_user.id):
         Var.waitinglist.append(message.from_user.id)
         return await message.reply_text("Another user is already using me. Theorically I can backup 2 channels at the same time, but better not overuse me 🙂\nYou will be notified when I'm free to use (grab your seat quickly 🏃‍♂️💨)")
-    else:
-        try:
-            Var.currentuser = message.from_user.id
-        except:
-            return await message.reply_text("Unknown error")
-        Var.tasks[0] = 1
-        await message.reply_text("Good 😌 you can now use me\nStart with **/backup**")
+    try:
+        Var.currentuser = message.from_user.id
+    except:
+        return await message.reply_text("Unknown error")
+    Var.tasks[0] = 1
+    await message.reply_text("Good 😌 you can now use me\nStart with **/backup**")
 
 # handle /backup with a verification (if id/name exists). If not : error message. If private : request to add bot. If ok : adds to idtodump
 @teledump.on_message(filters.command("backup"))
