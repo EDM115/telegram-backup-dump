@@ -291,7 +291,7 @@ async def simple(_, message: Message):
                 await _.copy_message(
                     chat_id=dest,
                     from_chat_id=target,
-                    message_id=id 
+                    message_id=id
                 )
             except FloodWait as f:
                 asyncio.sleep(f.x)
